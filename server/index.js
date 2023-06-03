@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 // express server
 const app = express();
@@ -20,6 +24,15 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
+//DATABASE CONNECTION
+mongoose.connect(process.env.MONGO_URL)
+.then(()=>{
+    console.log("connected to database")
+})
+.catch((err)=>{
+    console.log("error is :" + err)
+})
 
 app.get("/", (req, resp) => {
   resp.send("Hello");
