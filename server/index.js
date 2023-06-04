@@ -39,14 +39,25 @@ mongoose
   });
 
 //   ROUTES
-app.use("/auth",authRoutes);
+app.use("/auth", authRoutes);
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
-  socket.on("disconnect", () => {
-    console.log("Disconnected");
+  socket.on("chat", (data) => {
+    io.emit("chat", data);
   });
-  socket.on("chatMessage", (data) => {
-    console.log(data);
+
+  socket.on("connected", () => {
+    // Broadcast message when a user connects
+    socket.broadcast.emit("user_connected", "A user has connected from Server");
+  });
+
+  socket.on("disconnected", () => {
+    console.log("User has disconnected");
+
+    // Broadcast message when a user disconnects
+    socket.broadcast.emit(
+      "user_disconnected",
+      "The user has disconnected from Server"
+    );
   });
 });
