@@ -3,23 +3,16 @@ import { useState } from "react";
 import { socket } from "../../socket";
 
 const Home = () => {
-  const [localChats, setLocalChats] = useState([]);
-  const [chat, setChat] = useState([]);
-
+  const [input, setInput] = useState("");
   useEffect(() => {
     socket.connect();
     socket.on("connect", () => {
       alert("connected");
     });
-    socket.on("chat", (data) => {
-      setChat((pre) => [data, ...pre]);
-    });
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit("chat", localChats);
-    setLocalChats("");
   };
   return (
     <div>
@@ -29,8 +22,8 @@ const Home = () => {
             <input
               type="text"
               className="basis-4/5 rounded-sm"
-              onChange={(e) => setLocalChats(e.target.value)}
-              value={localChats}
+              onChange={(e) => setInput(e.target.value)}
+              value={input}
             />
             <button
               type="submit"
@@ -40,11 +33,6 @@ const Home = () => {
             </button>
           </div>
         </form>
-      </div>
-      <div id="chat">
-        {chat.map((ch, index) => (
-          <li key={index}>{ch}</li>
-        ))}
       </div>
     </div>
   );
