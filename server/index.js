@@ -42,7 +42,12 @@ mongoose
 app.use("/auth", authRoutes);
 
 io.on("connection", (socket) => {
-  socket.on("chat", (data) => {
-    io.emit("chat", data);
+  console.log("connected");
+  socket.on("chat",(data)=>{
+
+  })
+  socket.on("disconnect", () => {
+    console.log("disconnected");
   });
 });
+
