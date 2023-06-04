@@ -45,19 +45,4 @@ io.on("connection", (socket) => {
   socket.on("chat", (data) => {
     io.emit("chat", data);
   });
-
-  socket.on("connected", () => {
-    // Broadcast message when a user connects
-    socket.broadcast.emit("user_connected", "A user has connected from Server");
-  });
-
-  socket.on("disconnected", () => {
-    console.log("User has disconnected");
-
-    // Broadcast message when a user disconnects
-    socket.broadcast.emit(
-      "user_disconnected",
-      "The user has disconnected from Server"
-    );
-  });
 });

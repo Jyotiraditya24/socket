@@ -3,41 +3,34 @@ import { useState } from "react";
 import { socket } from "../../socket";
 
 const Home = () => {
-  const [chats, setChats] = useState(" ");
-  const [localChat, setLocalChat] = useState("");
+  const [localChats, setLocalChats] = useState([]);
+  const [chat, setChat] = useState([]);
 
   useEffect(() => {
     socket.connect();
-
-    socket.on("user_connected", (message) => {
-      alert(message);
+    socket.on("connect", () => {
+      alert("connected");
     });
-    socket.on("user_disconnected", (message) => {
-      alert(message);
+    socket.on("chat", (data) => {
+      setChat((pre) => [data, ...pre]);
     });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [chats]);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit("chat", localChat);
-    socket.on("chat", (data) => {
-      setChats(data);
-      console.log(chats);
-    });
+    socket.emit("chat", localChats);
+    setLocalChats("");
   };
   return (
     <div>
-      <div className="w-full bg-blue-600 px-5 py-5">
+      <div className="w-full bg-blue-600 px-5 py-5 absolute bottom-0">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-row gap-2">
             <input
               type="text"
               className="basis-4/5 rounded-sm"
-              onChange={(e) => setLocalChat(e.target.value)}
+              onChange={(e) => setLocalChats(e.target.value)}
+              value={localChats}
             />
             <button
               type="submit"
@@ -48,10 +41,10 @@ const Home = () => {
           </div>
         </form>
       </div>
-      <div>
-      
-          <li>{chats}</li>
-
+      <div id="chat">
+        {chat.map((ch, index) => (
+          <li key={index}>{ch}</li>
+        ))}
       </div>
     </div>
   );
