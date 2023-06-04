@@ -1,9 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-const http = require("http");
-const { Server } = require("socket.io");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+import express from "express";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
@@ -15,37 +16,35 @@ app.use(express.urlencoded({ extended: false }));
 // ENABLED CORS
 app.use(cors());
 
-// Created An Http server
+// Created an HTTP server
 const server = http.createServer(app);
 
-//SOCKET IO
+// SOCKET IO
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
 });
 
-//DATABASE CONNECTION
-mongoose.connect(process.env.MONGO_URL)
-.then(()=>{
-    console.log("connected to database")
-})
-.catch((err)=>{
-    console.log("error is :" + err)
-})
+// DATABASE CONNECTION
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    server.listen(3001, () => {
+      console.log("Connected to port " + 3001);
+    });
+  })
+  .catch((err) => {
+    console.log("Error: " + err);
+  });
 
-app.get("/", (req, resp) => {
-  resp.send("Hello");
-});
-
-server.listen(3001, () => {
-  console.log("Connected to " + 3001);
-});
+//   ROUTES
+app.use("/auth",authRoutes);
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("A user connected");
   socket.on("disconnect", () => {
-    console.log("disconnected");
+    console.log("Disconnected");
   });
   socket.on("chatMessage", (data) => {
     console.log(data);
